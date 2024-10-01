@@ -7,9 +7,7 @@ import {
   Param,
   Patch,
   Post,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { EmailValidationPipe } from 'src/common/pipes/email-validation-pipe/email-validation.pipe';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -51,11 +49,5 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
-  }
-
-  @Get('/download/spring-boot-project')
-  async downloadSpringBootProject(@Res() res: Response) {
-    const filePath = await this.usersService.downloadSpringBootProject();
-    res.download(filePath);
   }
 }

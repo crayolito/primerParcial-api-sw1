@@ -6,9 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import axios from 'axios';
-import * as fs from 'fs';
-import * as path from 'path';
 import { DataSource, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -91,38 +88,5 @@ export class UsersService {
     throw new InternalServerErrorException(
       'Unexpected error, check server logs',
     );
-  }
-
-  async downloadSpringBootProject(): Promise<string> {
-    const url =
-      'https://start.spring.io/starter.zip?type=maven-project&language=java&platformVersion=3.3.4&packaging=jar&jvmVersion=17&groupId=com.nombreproyecto&artifactId=proyecto&name=proyecto&description=PROYECTO%20UML%20FICCT&packageName=com.nombreproyecto.proyecto&dependencies=lombok,web,data-jpa,postgresql';
-    const filePath = path.resolve(__dirname, '..', 'downloads', 'proyecto.zip');
-
-    try {
-      const response = await axios({
-        url,
-        method: 'GET',
-        responseType: 'stream',
-      });
-
-      // Crear el directorio de descargas si no existe
-      const dir = path.dirname(filePath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-
-      // Guardar el archivo en el sistema de archivos
-      const writer = fs.createWriteStream(filePath);
-      response.data.pipe(writer);
-
-      return new Promise((resolve, reject) => {
-        writer.on('finish', () => resolve(filePath));
-        writer.on('error', reject);
-      });
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Error al descargar el proyecto Spring Boot',
-      );
-    }
   }
 }
